@@ -15,40 +15,44 @@ using UnityEngine;
 
 public class SamplePlayer : MonoBehaviour
 {
-    /*/// <summary>
+    /// <summary>
     /// The distance this player will travel per second.
     /// </summary>
     [SerializeField]
     private float moveSpeed;
 
     [SerializeField]
-    private float rotationSpeed;
+    public float rotationSpeed;
 
     /// <summary>
     /// The camera attached to the player model.
     /// Should be dragged in from Inspector.
     /// </summary>
-    private Camera playerCamera;
+    public GameObject playerCamera;
 
-    private string currentState;
+    public string currentState;
 
-    private string nextState;
+    public string nextState;
+
+    private Rigidbody rb;
 
     // Start is called before the first frame update
     void Start()
     {
-        nextState = "Idling";
+        
+        nextState = "Idle";
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(nextState != currentState)
+        if (nextState != currentState)
         {
             SwitchState();
         }
 
         CheckRotation();
+        
     }
 
     /// <summary>
@@ -59,15 +63,15 @@ public class SamplePlayer : MonoBehaviour
     {
         StopCoroutine(currentState);
 
-        currenState = nextState;
+        currentState = nextState;
         StartCoroutine(currentState);
     }
 
     private IEnumerator Idle()
     {
-        while(currentState == "Idle")
+        while (currentState == "Idle")
         {
-            if(Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") != 0)
+            if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") != 0)
             {
                 nextState = "Moving";
             }
@@ -79,24 +83,32 @@ public class SamplePlayer : MonoBehaviour
     {
         while (currentState == "Moving")
         {
-            if (!CheckMovement())
+            if (CheckMovement())
             {
                 nextState = "Idle";
             }
             yield return null;
         }
-        }
     }
 
-    private void CheckRotation()
+
+    public void CheckRotation()
     {
         Vector3 playerRotation = transform.rotation.eulerAngles;
-        playerRotation.y = Input.GetAxis("Mouse X") * rotationSpeed * Time.deltaTime;
+        playerRotation.y += Input.GetAxis("Mouse X") * rotationSpeed * Time.deltaTime;
 
         transform.rotation = Quaternion.Euler(playerRotation);
 
+
+        /*Vector3 playerRotation = playerCamera.transform.rotation.eulerAngles;
+        playerRotation.y += Input.GetAxis("Mouse X") * rotationSpeed * Time.deltaTime;
+
+        playerCamera.transform.rotation = Quaternion.Euler(playerRotation);
+        */
+
+
         Vector3 cameraRotation = playerCamera.transform.rotation.eulerAngles;
-        cameraRotation.x += Input.GetAxis("Mouse Y") * rotatingSpeed * Time.deltaTime;
+        cameraRotation.x += Input.GetAxis("Mouse Y") * rotationSpeed * Time.deltaTime;
 
         playerCamera.transform.rotation = Quaternion.Euler(cameraRotation);
     }
@@ -105,9 +117,9 @@ public class SamplePlayer : MonoBehaviour
     /// Checks and handles movement of the player
     /// </summary>
     /// <returns>True if user input is detected and player is moved.</returns>
-    private bool CheckMovement()
+    public bool CheckMovement()
     {
-        return false;
+        /*return false;*/
         Vector3 newPos = transform.position;
 
         Vector3 xMovement = transform.right * Input.GetAxis("Horizontal");
@@ -115,7 +127,7 @@ public class SamplePlayer : MonoBehaviour
 
         Vector3 movementVector = xMovement + zMovement;
 
-        if(movementVector.sqrMagnitude > 0)
+        if (movementVector.sqrMagnitude > 0)
         {
             movementVector *= moveSpeed * Time.deltaTime;
             newPos += movementVector;
@@ -128,5 +140,5 @@ public class SamplePlayer : MonoBehaviour
             return true;
         }
 
-    }*/
+    }
 }
